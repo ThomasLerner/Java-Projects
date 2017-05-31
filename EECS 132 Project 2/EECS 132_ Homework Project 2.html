@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+     "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+<head>
+<title>EECS 132: Homework Project 2</title>
+</head>
+
+<body>
+<h2>Programming Project 2</h2>
+<h3>Due Friday, October 16 at 11:59pm</h3>
+
+<p>This second programming assignment is to give you practice writing loops and manipulating strings.  Arrays are not needed, <em>and you should not
+use arrays in your assignment</em>.  All the methods you create should be <tt>static</tt>.</p>
+
+<p>While it may be tempting to hunt through the API to find classes and methods that can shorten your code, you may not
+do that.  First reason is that this homework is an exercise in writing loops, not in using the API.  The second reason is that in a lot of cases, the API methods may shorten the <em>writing</em> of your code but increase its <em>running time</em>.
+The only classes and methods you can use are listed below.</p>
+<p><em>Important</em>: you must not use either <tt>break</tt> or <tt>continue</tt> in your code.  These two commands almost always are used to compensate for
+a poorly designed loop.  Likewise, you must not write code that mimics what <tt>break</tt> does.  Instead, re-write your loop so that the loop logic does not need break-type behavior.</p>
+
+<p>You <em>are allowed</em> to use the following from the Java API:
+<ul><li>class String
+    <ul><li>length</li>
+        <li>charAt</li>
+   </ul></li>
+   <li>class StringBuilder
+   <ul><li>length</li>
+       <li>charAt</li>
+       <li>append</li>
+       <li>toString</li>
+   </ul></li>
+   <li>class Character
+    <ul><li>any method</li>
+   </ul></li>
+   <li>JOptionPane</li>
+    <ul><li>ShowInputDialog</li>
+   </ul></li>
+</ul>
+</p>
+
+<h3>General Guidelines (20% of your grade will be based on using good style)</h3>
+
+<p>
+<ul>
+<li>All methods listed below must be <tt>public</tt> and <tt>static</tt>.</li>
+<li>No additional methods are needed.  
+However, you may write additional <em>private</em> helper methods, but you still need to have efficient and simple algorithms. Do not write helper methods that do <em>unnecessary</em>
+traversals of the data.</li>
+<li>You should place a comment at the top of the file that contains your name
+and a short description of the purpose of the class.</li>
+<li>You should place a <em>short</em> comment before (directly above) each method describing the method.  The comment should
+be only describe <em>what</em> the method does, not <em>how</em> it does it.  Do not simply copy the descriptions
+below for your comments.</li>
+<li>You should place a short comment directly above each field (should you really have any?)
+indicating the purpose of the variable.</li>
+<li>You should place a short comment above each loop explaining how the loop works.  Ideally, you should list the goal of the 
+loop, any required precondition for the loop, and if you can, a good iteration subgoal for the loop.</li>
+<li>Any other complicated code such as code the has lots of if statements or variables should contain <em>short</em> comments to help the reader.  The comments can either be above the code fragment or to the right, aligned in a column.</li>
+<li>If your code is using a loop to modify or create a string, you need to use the <tt>StringBuilder</tt> class from the API.</li>
+<li><strong>Important:</strong> You should not use the commands <tt>break</tt> nor <tt>continue</tt> in your loops.</li>
+<li>Remember to use good style: everything should be indented nicely, variables should have good names, there should be a blank line between each method.</li>
+</ul></p>
+
+<p>To submit your project, click on the <em>HW 2</em> link, and you should find a <em>Submit</em> link.  Attach your
+Java file and your testing report.
+Remember to attach the files that end in <tt>.java</tt>, not <tt>.class</tt> or <tt>.java~</tt>.</p>
+
+<h3>Part I: Programming (60% of your grade will be correctness of the following)</h3>
+
+<p>Try to keep your code as simple as possible.</p>
+
+
+<p>Create a class called <tt>HW2</tt> that contains the following methods:
+<ol>
+
+<li><p><tt>replaceFirstK</tt>:  takes a <tt>String</tt>, two <tt>char</tt>s, and an <tt>int</tt> as input and returns a <tt>String</tt>
+that is the same as the parameter <tt>String</tt> except that first <tt>int</tt> occurrences of the first <tt>char</tt> parameter are replaced with the second <tt>char</tt> parameter.
+<pre>
+> HW2.replaceFirstK("Mississippi River", 'i', 'I', 3)
+"MIssIssIppi River"
+> HW2.replaceFirstK("Missouri River", 'r', '*', 3)
+"Missou*i Rive*"
+</pre>
+</p></li>
+
+<li><p><tt>allChars</tt>: takes two <tt>char</tt> parameters.  Creates a <tt>String</tt> containing all characters, in order,
+from the first <tt>char</tt> parameter (inclusive) to the last (inclusive).
+<pre>
+> HW2.allChars('d', 'm')
+"defghijklm"
+</pre>
+</p></li>
+
+<li><p><tt>showCharOfString</tt>:  takes two <tt>String</tt> parameters.  Outputs a new <tt>String</tt> that is the same as the
+first <tt>String</tt> except that: for each character of the
+first <tt>String</tt>, if the character is not in the second <tt>String</tt>, replace that character with the underscore ('_').  
+<pre>
+> HW2.showCharOfString("Missouri River", "s SR!r")
+"__ss__r_ R___r"
+</pre>
+</p></li>
+
+<li><p><tt>hangman</tt>:  Takes a <tt>String</tt> and an <tt>int</tt> and returns a <tt>boolean</tt>.  The method plays the game of hangman where the <tt>String</tt> is the word
+the player must guess and the <tt>int</tt> is the maximum number of "bad guesses" allowed.  The game should work as follows:
+  <ol><li>Creates a <tt>StringBuilder</tt> that stores all the letters guessed by the player.  The <tt>StringBuilder</tt> should initially be empty.</li>
+      <li>Has a loop that does the following:</li>
+      <ol><li>Calls the <tt>showCharOfString</tt> on the parameter <tt>String</tt> and a string containing all the guessed letters.</li>
+      <li>Uses <tt>System.out.println</tt> to print the <tt>String</tt> returned from the previous step as well as the total
+ number of "bad guesses" so far. (<em>For fun, you can print a graphical hangman instead of the number of bad guesses.</em>)</li>
+      <li>Uses <tt>javax.swing.JOptionPane.showInputDialog</tt> to get the next guessed letter from the user. The method should not crash if the user does not enter appropriate data.</li>
+      <li>If the letter has not yet been guessed, adds the letter to the <tt>StringBuilder</tt> containing the guessed letters and if the letter is not in the input <tt>String</tt>,
+           increases the count of "bad guesses" by one.</li></ol>
+      <li>The loop repeats until either: all letters of the parameter <tt>String</tt> are guessed or the number of "bad guesses"
+           equals the <tt>int</tt> parameter.</li></ol>
+   Finally, the method returns <tt>true</tt> if the player guessed all the letters of the input <tt>String</tt> without reaching the limit on "bad guesses", and false if the "bad guesses" limit was reached.
+   You should organize your loop so the return statement is after the loop terminates.</p></li>
+
+<li><p><tt>hiddenInString</tt>: takes two <tt>String</tt> parameters and an <tt>int</tt> as input and returns a <tt>boolean</tt>.
+The method returns <tt>true</tt> if we can find the second string inside the first string by starting at any position of the first string
+and reading every <em>k</em>th character where <em>k</em> is the <tt>int</tt> value input to the method.
+<pre>
+> HW2.hiddenInString("abracadabra", "cad", 1)
+true
+> HW2.hiddenInString("abracadabra", "cad", 2)
+false
+> HW2.hiddenInString("abracadabra", "baaa", 2)
+true
+> HW2.hiddenInString("abracadabra", "ab", 3)
+true
+> HW2.hiddenInString("abracadabra", "abc", 3)
+false
+> HW2.hiddenInString("abracadabra", "bar", -3)
+true
+</pre>
+</p></li>
+
+<li><p><tt>capitalizeWords</tt> takes a <tt>String</tt> as input and returns a <tt>String</tt> as output.  Any word in the input string (a word is defined as a sequence of Enlish letters plus the hypen <tt>-</tt>)
+that contains any capitalized letter will have all its letters capitalized in the output string.
+<pre>
+> HW2.capitalizeWords("Guess what??  There are twenty-sIx letters in the English alphABEt!")
+"GUESS what??  THERE are TWENTY-SIX letters in the ENGLISH ALPHABET!"
+</pre>
+</p></li>
+
+<li><p><strong>Extra Credit (up to 10%)</strong>: Create method that plays a solitaire game of hangman.  The method takes a <tt>String</tt>
+and a <tt>int</tt>.  The <tt>int</tt> is again the maximum number of "bad guesses", but the <tt>String</tt> is a file that contains
+possible words for the game.  This method should open the file, count the number of words in the file (a word is defined as a sequence of English letters only), then call 
+<tt>Math.random</tt> to pick a random number that indicates which word it should use.  Then the method should
+extract that word and call the above <tt>hangman</tt> method to play the game.  You will need to use the <tt>java.io</tt>
+package from the API to open and read from a file.  A list of words file will be provided for you on the homework page, but your method should work with any text file.</p></li>
+
+</ol></p>
+
+<h3>Part 2: Project Testing (20% of your project grade)</h3>
+
+<p>You need to write tests for each of the methods above.  Your tests should be thorough.
+Your testing report should describe why your test cases sufficiently tested your code as well as the specific tests you ran and their results.
+If you are unable to complete a method above, you should still
+describe tests that would test the method had it been completed.</p>
+
+<p>Hints for testing loops.  Your tests need to, at the minimum cover the following cases:
+<ol>
+<li><strong>Test 0, test 1, test many:</strong>  This means you have to test cases where the parameters, if they are integers,
+are 0, 1 or some value other than 1.  If the parameters are strings, you have to test strings of length 0, 1, and more than 1.
+If the strings must contain certain data, you need to test cases where they contain 0, 1, and more than 1 of the desired data.</li>
+<li><strong>Test first, last, and middle:</strong>  In cases where you have to search in or modify a string, you need to test
+cases where the item to be found or modified is the first character of the string, the last character of the string, or somewhere
+in the middle of the string.</li>
+</ol></p>
+
+<p>In summary, your tests should cover each of the above cases for each of the methods you complete in the homework.
+Your testing report should state what <em>test 0, test 1, test many</em> and <em>test first, last, and middle</em> mean for each of the homework
+methods and how your tests covered these cases.</p>
+
+<p><strong>JUnit</strong>: you will be learning about JUnit soon in a lab.  JUnit will be required for future homeworks, and you are welcome
+to use it with this homework.  If you choose to write JUnit tests for your code,
+your report should not list the specific tests and their results because the graders can run your JUnit tests.
+Instead, your report should only detail what <em>test 0, test 1, test many</em> and <em>test first, last, and middle</em> means for each
+method and why your JUnit tests cover those cases.
+</body>
+
+</html>
+

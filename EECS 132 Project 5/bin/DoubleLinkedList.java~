@@ -1,0 +1,250 @@
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
+
+public class DoubleLinkedList<T> implements Iterable<T>{
+
+
+	/** a reference to the first node of the double linked list */
+	private DLNode<T> front;
+
+	/** a reference to the last node of a double linked list */
+	private DLNode<T> back;
+
+	/** Create an empty double linked list. */
+	public DoubleLinkedList() {
+		front = back = null;
+	}
+
+	/** 
+	 * Returns true if the list is empty.
+	 * @return  true if the list has no nodes
+	 */
+	public boolean isEmpty() {
+		return (getFront() == null);
+	}
+
+	/**
+	 * Returns the reference to the first node of the linked list.
+	 * @return the first node of the linked list
+	 */
+	protected DLNode<T> getFront() {
+		return front;
+	}
+
+	/**
+	 * Sets the first node of the linked list.
+	 * @param node  the node that will be the head of the linked list.
+	 */
+	protected void setFront(DLNode<T> node) {
+		front = node;
+	}
+
+	/**
+	 * Returns the reference to the last node of the linked list.
+	 * @return the last node of the linked list
+	 */
+	protected DLNode<T> getBack() {
+		return back;
+	}
+
+	/**
+	 * Sets the last node of the linked list.
+	 * @param node the node that will be the last node of the linked list
+	 */
+	protected void setBack(DLNode<T> node) {
+		back = node;
+	}
+
+	/*----------------------------------------*/
+	/* METHODS TO BE ADDED DURING LAB SESSION */
+	/*----------------------------------------*/
+
+	/**
+	 * Add an element to the head of the linked list.
+	 * @param element  the element to add to the front of the linked list
+	 */
+	public void addToFront(T element) {
+		if (getFront()!=null){
+			setFront(new DLNode<T>(element,null,getFront()));
+		}
+		else {
+			setFront(new DLNode<T>(element,null,null));
+			setBack(getFront());
+		}
+	}
+
+	/**
+	 * Add an element to the tail of the linked list.
+	 * @param element  the element to add to the tail of the linked list
+	 */
+	public void addToBack(T element) {
+		if (getBack()!=null){
+			setBack(new DLNode<T>(element,getBack(),null));
+		}
+		else {
+			setFront(new DLNode<T>(element,null,null));
+			setBack(getFront());
+		}
+	}
+
+	/**
+	 * Remove and return the element at the front of the linked list.
+	 * @return the element that was at the front of the linked list
+	 * @throws NoSuchElementException if attempting to remove from an empty list
+	 */
+	public T removeFromFront() throws NoSuchElementException{
+		if (isEmpty()){
+			throw new NoSuchElementException();
+		}
+		else {
+			T removedElement = getFront().getElement();
+			if (getFront().getNext() == null){
+				setFront(null);
+				setBack(null);
+			}
+			else {
+				System.out.println("we're hitting this, right?" + "  Removing " + removedElement);
+				getFront().getNext().setPrevious(null);
+				setFront(getFront().getNext());
+				System.out.println("Front is now " + getFront().getElement() + " and it points to " + getFront().getPrevious());
+			}
+			return removedElement;
+
+		}
+	}
+
+	/**
+	 * Remove and return the element at the back of the linked list.
+	 * @return the element that was at the back of the linked list
+	 * @throws NoSuchElementException if attempting to remove from an empty list
+	 */
+	public T removeFromBack() throws NoSuchElementException{
+		if (isEmpty()){
+			throw new NoSuchElementException();
+		}
+		else {
+			T removedElement = getBack().getElement();
+			if (getBack().getPrevious()==null){
+				setFront(null);
+				setBack(null);
+			}
+			else {
+				setBack(getBack().getPrevious());
+			}
+			return removedElement;
+		}
+	}
+
+
+	@Override
+	public Iterator<T> iterator() { 
+
+		return new ListIterator<T>(){
+
+			DLNode<T> nodePtr = new DLNode<T>(null, null, getFront());
+			private boolean nextCalled = false;
+			private boolean previousCalled = false;
+
+			@Override
+			public void add(T element) {
+				DLNode<T> node = new DLNode<T>(element, null, null);
+				if(hasPrevious()) {
+					node = new DLNode<T>(element, nodePtr.getPrevious().getNext(), nodePtr.getNext());
+				}
+				else {
+					node = new DLNode<T>(element, null, nodePtr.getNext());
+				}
+				if(hasNext()) {
+					nodePtr.getNext().getPrevious().setPrevious(node);
+				}
+				if(hasPrevious()) {
+					nodePtr.getPrevious().setNext(node);
+				}
+			}
+
+			@Override
+			public boolean hasNext() {
+				return (nodePtr.getNext() != null);
+			}
+
+			@Override
+			public boolean hasPrevious() {
+				if(nodePtr.getNext() == getFront()) {
+					return false;
+				}
+				else {
+					return (nodePtr != null);
+				}
+			}
+
+			@Override
+			public T next() {
+				nextCalled = true;
+				if(hasNext()) {
+					nodePtr = nodePtr.getNext();
+					return nodePtr.getElement();
+				}
+				else {
+					throw new NoSuchElementException();
+				}
+			}
+
+			@Override
+			public int nextIndex() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public T previous() {
+				if(nodePtr == getFront()) {
+					nodePtr = new DLNode<T>(null, null, getFront());
+					return getFront().getElement();
+				}
+				if(hasPrevious()) {
+					System.out.println("hits hasPrevious");
+					DLNode<T> sub = nodePtr;
+					nodePtr = nodePtr.getPrevious();
+					return sub.getElement();
+				}
+				else {
+					System.out.println("hits previous exception");
+					throw new NoSuchElementException();
+				}
+			}
+
+			@Override
+			public int previousIndex() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void remove() {
+				if(nodePtr == getFront()){
+					System.out.println("hits removeFromFront");
+					removeFromFront();
+				}
+//				else if((!previousCalled && !nextCalled) || nodePtr.getNext() == getFront() || !hasPrevious()  /** (hasNext() == true && nodePtr.getNext().getPrevious() != nodePtr) || (hasPrevious() == true && nodePtr.getPrevious().getNext() != nodePtr) */) {
+//					System.out.println("hits exception");
+//					throw new IllegalStateException();
+//				}
+				else if(hasPrevious() && hasNext()) {
+					System.out.println("Front is now " + getFront().getElement() + " and it points to " + getFront().getPrevious());
+					// previous();
+					nodePtr.getPrevious().setNext(nodePtr.getNext());
+					nodePtr.getNext().setPrevious(nodePtr.getPrevious());
+					previous();
+				}
+				else if(nodePtr.getNext() == getBack()) {
+					System.out.println("hits removeFromBack");
+					removeFromBack();
+				}
+			}
+
+			@Override
+			public void set(T e) {
+				throw new UnsupportedOperationException();
+			}
+		};
+	}
+}

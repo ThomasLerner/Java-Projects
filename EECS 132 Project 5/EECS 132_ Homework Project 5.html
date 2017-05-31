@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!-- saved from url=(0108)https://blackboard.case.edu/bbcswebdav/pid-1245319-dt-content-rid-3611420_1/courses/eecs132_hsc21_8/hw5.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>EECS 132: Homework Project 5</title>
+<style type="text/css"></style></head>
+
+<body>
+<h2>Programming Project 5</h2>
+<h3>Due Sunday, December 6 at 11:59pm</h3>
+
+<p><strong>As Monday, December 7 is Reading Day and needs to be spent preparing for final exams, <em>no late assignments will be accepted</em>.</strong></p>
+
+
+<p>In this homework you will be creating a job scheduler that receives a list of jobs and attempts to schedule as many of them as possible in order to maximize the
+profit earned.</p>
+
+<p><strong>VERY IMPORTANT:</strong>  The purpose of this homework is to give you practice using lists, generic types, and iterators.  You must use these types correctly.
+</p><ul><li>You must <em>NOT</em> have any warning messages when compiling your code due to improper use of generic types.</li>
+    <li>In many places, you are given the choice of using an array, an ArrayList, or a linked list.  The linked list can be singly or doubly linked, and you can use the linked
+list classes we developed or the one from the Java API.  However, you <em>MUST</em> use the types correctly.  Just because a method exists does not mean you can use it.  In particular,
+you should not continually resize an array or ArrayList.  You should not insert into an array or ArrayList in a manner that requires the contents of the array to shift.  You should not access an entry of a linked list by its index.
+</li></ul>
+<p></p>
+
+<h3>General Guidelines (20% of your grade will be based on using good style)</h3>
+
+<p>Guidelines continued from past projects:
+</p><ul>
+<li>You should place a JavaDoc comment at the top of the file that contains your name (with an appropriate tag)
+and a short description of the purpose of the class.</li>
+<li>You should place a <em>short</em> JavaDoc comment before (directly above) each method describing the method.  The comment should
+be one sentence and describe <em>what</em> the method does, not <em>how</em> it does it.  Be certain to use the
+appropriate JavaDoc tags for parameters, return values, and exceptions (if appropriate). </li>
+<li>You should place a short JavaDoc comment directly above any field indicating the purpose of the variable.</li>
+<li>You should place a comment next to any local variable (loop indeces do not need comments) indicating the purpose
+of the variable. </li>
+<li>You should place a short comment above each loop explaining how the loop works.
+Ideally, you should list the goal of the
+loop, any required precondition for the loop, and if you can, a good invariant for the loop.</li>
+<li>The class should be organized so the fields are at the top, then the constructors, then the non-static methods,
+and finally the static methods.  The <tt>main</tt> method should be last.</li>
+<li>There should be an empty line between the end of one method and the start of the JavaDoc comment for the next method.</li>
+<li>All variables and methods should be named according to the standard Java protocol.</li>
+<li>All code should be indented appropriately.</li>
+<li>You need to avoid unnecessary fields in your class. </li>
+<li>Your loops should be simple.  Avoid nested loops unless they are required. Use good loop conditions so that you do not need <tt>break</tt> or <tt>continue</tt> or break-like code in the body of your loops.</li>
+</ul>
+<p></p>
+
+<h3>Programming (60% of the project grade)</h3>
+
+<h4>Part I: Doubly Linked Lists</h4>
+
+<p>You are to expand the <tt>DoubleLinkedList</tt> class you worked on in lab.  You are to make the <tt>DoubleLinkedList</tt> implement <tt>Iterable</tt> and have the
+<tt>iterator</tt> method return a <tt>ListIterator</tt> from the API.  <tt>ListIterator</tt> is an extension of <tt>Iterator</tt> and has additional method stubs that
+must be overridden.  You are required to implement the methods
+</p><ol><li><tt>add</tt></li><li><tt>hasNext</tt></li><li><tt>hasPrevious</tt></li><li><tt>next</tt></li><li><tt>previous</tt></li><li><tt>remove</tt></li></ol>
+Your implementations <em>must</em> match the descriptions given in the Java API.  You <em>may</em> implement the other methods of the interface, but that is not required.
+For any method you choose to not implement, have the method throw a <tt>UnsupportedOperationException</tt>.<p></p>
+
+<h4>Part II: Job Scheduling </h4>
+
+<p>For the rest of this project, you will write a program that schedules jobs.  Job scheduling is an extremely important problem
+in computer science, and depending on the specifications of the problem, there are very different optimal algorithms.
+For this homework,
+each job has the following properties and the goal is to schedule the jobs in order to maximize profit.
+</p><ul><li><em>earliest start time</em> the earliest time at which the job may be started</li>
+<li><em>deadline</em> the time by which the job must be completed</li>
+<li><em>duration</em> the length of time it will take to do the job</li>
+<li><em>profit</em> the amount of money you will make if you complete the job</li>
+</ul>
+We will assume that you can only work on one job at a time, and you must complete a job that you start before
+you can begin the next one.<p></p>
+
+<p>For example, consider the following three jobs:
+</p><table><thead><tr><th>Job #</th><th>Earliest Start</th><th>Deadline</th><th>Duration</th><th>Profit</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>2</td><td>6</td><td>2</td><td>10</td></tr>
+<tr><td>2</td><td>3</td><td>6</td><td>3</td><td>20</td></tr>
+<tr><td>3</td><td>3</td><td>9</td><td>5</td><td>15</td></tr>
+</tbody></table>
+Job 1 must be completed by time 6 and has duration 2.  So, Job 1 can be started at time 2, 3, or 4.
+Job 2 must be completed by time 6 and has duration 3.  So, Job 2 must be started at time 3.  Note that it is
+impossible to schedule both Job 1 and Job 2.  Job 2 must use times 3-5, but Job 1 has the option of using times
+2-3, 3-4, or 4-5.  Job 3 must be completed by time 8 and has duration 5, so Job 3 may either start at time 3 and
+use times 3-7, or it may start at time 4 and use times 4-8.  In this case, the most profit can be achieved from
+scheduling Job 1 to start at time 2.  Job 1 will complete by time 4 so we can schedule Job 3 to start at time 4,
+and we have a total profit of 25.  The second best schedule is to schedule only Job 2 at time 3 and get a profit of 20.<p></p>
+
+<h4>The Job Classes</h4>
+
+<ul><li><p>The <tt>Job</tt> class<br>
+A <tt>Job</tt> consists of five values: 
+</p><ol><li><tt>id</tt> a unique value that indentifies the job</li>
+    <li><tt>earliestStart</tt> the earliest time at which the job may be started</li>
+    <li><tt>deadline</tt> the latest time at which the job must complete</li>
+    <li><tt>duration</tt> the length of time it takes to complete the job</li>
+    <li><tt>profit</tt> the amount of profit to be earned if the job is completed</li>
+</ol>
+All the values are type <tt>int</tt>.  Create fields, getter methods for the fields, a constructor that initializes all the fields, and an appropriate <tt>equals</tt> method.
+<p></p>
+<p>The <tt>Job</tt> should be <tt>Comparable</tt> with the default ordering by <tt>id</tt> from smallest to largest.</p>
+<p>You should create at least two <tt>Comparator</tt>s for <tt>Job</tt>.  One should sort jobs by <tt>earliestStart</tt>, from smallest to largest, and one should
+sort jobs by <tt>profit</tt> from largest to smallest.  Have the methods <tt>getStartComparator</tt> and <tt>getProfitComparator</tt> return these <tt>Comparators</tt>.</p></li>
+
+<li><p>The <tt>CompoundJob</tt> class<br>
+A <tt>CompoundJob</tt> <em>is a</em> job that consists of "sub"-jobs.  Each subjob is type <tt>Job</tt>.
+(You should decide if the subjobs should be stored in an array, ArrayList, or linked list.)
+In a <tt>CompoundJob</tt> all the subjobs should be completed in order to receive the profit from the job. 
+The subjobs must be completed in order, but do not have to be scheduled consecutively.
+The <tt>earliestStart</tt> of the <tt>CompoundJob</tt> is the <tt>earliestStart</tt> of the first subjob.  The <tt>duration</tt> of the <tt>CompoundJob</tt> is the
+sum of the durations of each subjob.  The <tt>deadline</tt> of the <tt>CompoundJob</tt> is the deadline of the last subjob.
+The <tt>earliestStart</tt> and <tt>deadline</tt> for each subjob (other than the earliest start of the first subjob and deadline of the last subjob) can be calculated appropriately.
+The profit of the <tt>CompoundJob</tt> is only earned if all subjobs are successfully completed.  We will assume that the subjobs
+do not have any profit (though you may change this for the extra credit). </p>
+
+<p>Besides the methods it inherits, the <tt>CompoundJob</tt> class should have the method 
+</p><ol><li><tt>getSubJobs()</tt> retrieves the a list (the type is up to you) of the subjobs of the <tt>CompoundJob</tt></li></ol>
+and the constructor 
+<ol><li><tt>CompoundJob(int profit, Job... subJobs)</tt> <br> <tt>profit</tt> is the profit earned if all the subjobs of the compound job can be scheduled and completed.
+ <tt>Job...</tt> is a Java shortcut called a <em>variable length parameter</em>, and it is a shortcut for an array.
+The type of <tt>subJobs</tt> is <tt>Job[]</tt>, but you have two ways to pass the array into the constructor, either as an array or as the individual elements separated
+by commas.  <tt>new CompoundJob(jobsArray)</tt> or <tt>new CompoundJob(job1, job2, job3, job4)</tt>.</li></ol><p></p>
+<p>For example, supposed the compound job consists of three subjobs, the first subjob has <em>earliest start</em> 1 and <em>duration</em> 6, the second subjob has <em>duration</em> 3, and
+the third subjob has <em>duration</em> 8 and <em>dealine</em> 25.  The compound job should be set to have <em>earliest start</em> 1, <em>duration</em> 17, and <em>deadline</em> 25.
+In addition, to help you schedule the subjobs along with all the other jobs, I recommend that you set the <em>deadline</em> for the first subjob to be 14 (that is the latest it can finish such that the other two subjobs can be scheduled), the second subjob
+should have its <em>deadline</em> set to 17 and its <em>earliest start</em> set to 7, and the third subjob should have its <em>earliest start</em> set to 10.</p></li>
+</ul>
+
+<h4>The Scheduling Classes</h4>
+
+<ul><li><p>The <tt>ScheduleSlot</tt> class<br>
+A <tt>ScheduleSlot</tt> consists of two values:
+</p><ol><li><tt>job</tt> the job that is scheduled in this slot</li>
+    <li><tt>startTime</tt> the start time of this slot</li>
+</ol>
+<tt>startTime</tt> should type <tt>int</tt> and <tt>job</tt> should be type <tt>Job</tt>.
+Create fields, getter methods for the fields, a setter method for <tt>startTime</tt> and a constructor that initializes both fields.
+The <tt>ScheduleSlot</tt> will represent the scheduled time for the <tt>job</tt>.  We will start the job at time <tt>startTime</tt>
+and work on the job exclusively for the length of the job's <tt>duration</tt>.<p></p></li>
+
+<li><p>The <tt>Schedule</tt> type<br>A Schedule is an (ordered) doubly linked list of <tt>ScheduleSlot</tt>s. <br> 
+There are multiple ways you can define the <tt>Schedule</tt>, and you are free to choose an appropriate one.
+While you are encouranged to use the <tt>DoubleLinkedList</tt> class you developed in Part I, you may use the <tt>LinkedList</tt> class from the API.
+(Note that the Schedule cannot be an array or an ArrayList because we will be doing lots of insertions into the middle of the list.)  The slots will be ordered by
+<tt>startTime</tt>.</p></li>
+
+<li><p>The <tt>ScheduleMetric</tt> interface <br>
+The interface will have one method stub <tt>scheduleJob</tt> that takes a <tt>Schedule</tt> and a <tt>Job</tt> as input and returns a <tt>boolean</tt>.</p></li>
+
+<li><p>The <tt>ScheduleAsLateAsPossible</tt> class <br>
+<tt>ScheduleAsLateAsPossible</tt> is a <tt>ScheduleMetric</tt>.  The <tt>scheduleJob</tt> method attempts to place the job into the schedule such that the job
+will be completed at as late a time as possible given the job's <tt>deadline</tt> and the other jobs in the schedule.  A <tt>ScheduledSlot</tt> containing the job should only
+be added to the schedule if the job's scheduled time (the <tt>ScheduledSlot</tt>'s <tt>startTime</tt> to the <tt>startTime</tt> plus the job's <tt>duration</tt>) 
+starts no earlier than the job's <tt>earliestStart</tt>, completes by the job's <tt>deadline</tt>, and the scheduled time
+does not overlap the scheduled times of any other jobs in the schedule.  Scheduling as late as possible means that it is impossible to have a <tt>ScheduleSlot</tt> with a later
+<tt>startTime</tt> without having the job's scheduled time exceeding the job's <tt>deadline</tt> or overlapping with some other job on the schedule.
+If it is possible to schedule the job, a new <tt>ScheduleSlot</tt> containing the job and the necessary start time is added to the schedule and the method returns <tt>true</tt>.
+Otherwise, the method returns <tt>false</tt>.
+As a hint, try iterating through the <tt>ScheduleSlot</tt>s starting at the last scheduled job.</p>
+<p>If the job is a <tt>CompoundJob</tt>, you should schedule each of the subjobs individually, but 
+if it is impossible to schedule all the subjobs, you must remove the <tt>ScheduleSlots</tt>s of any subjobs that were placed in the schedule.
+As a hint, traverse the subjobs in the same order that you are 
+traversing through the schedule so that you do not have to restart the iterations with each subjob.</p></li>
+
+<li><p>The <tt>ScheduleAsEarlyAsPossible</tt> class<br>
+<tt>ScheduleAsEarlyAsPossible</tt> is a <tt>ScheduleMetric</tt>.  The <tt>scheduleJob</tt> method attempts to place the job into the schedule such that the job
+will be completed at as early a time as possible given the job's <tt>startTime</tt> and the other jobs in the schedule.  A <tt>ScheduledSlot</tt> containing the job should only
+be added to the schedule if the job's scheduled time (the <tt>ScheduledSlot</tt>'s <tt>startTime</tt> to the <tt>startTime</tt> plus the job's <tt>duration</tt>) 
+starts no earlier than the job's <tt>earliestStart</tt>, completes by the job's <tt>deadline</tt>, and the scheduled time
+does not overlap the scheduled times of any other jobs in the schedule.  Scheduling as early as possible means that it is impossible to have a <tt>ScheduleSlot</tt> with an earlier
+<tt>startTime</tt> without having the <tt>startTime</tt> earlier than the job's <tt>eariestStart</tt> or overlapping with some other job on the schedule.
+If it is possible to schedule the job, a new <tt>ScheduleSlot</tt> containing the job and the necessary start time is added to the schedule and the method returns <tt>true</tt>.
+Otherwise, the method returns <tt>false</tt>.
+As a hint, try iterating through the <tt>ScheduleSlot</tt>s starting at the first scheduled job.</p>
+<p>If the job is a <tt>CompoundJob</tt>, see the note for how to handle compound jobs in <tt>ScheduleAsLateAsPossible</tt>.</p></li> 
+</ul>
+
+<h4>The Job Scheduler</h4>
+
+<ul><li><p>The <tt>JobScheduler</tt> class<br>
+A class that does the job scheduling.  It should have the following methods:
+</p><ol><li><p><tt>scheduleJobs</tt> takes a list of <tt>Jobs</tt> (you should decide if this should be an array, ArrayList, or linked list), a <tt>Comparator</tt> for the jobs,
+and a <tt>ScheduleMetric</tt>.  The method should sort the list of <tt>Jobs</tt> using the <tt>Comparator</tt>, create an initially empty <tt>Schedule</tt>,
+and then the iterate through the list (try using a <em>foreach</em> loop) and attempt to schedule each job using the <tt>ScheduleMetric</tt>.  The <tt>Schedule</tt> is returned.
+</p><p>If you are using the a linked list implementation from class, use the fast <em>merge sort</em> algorithm we will develop in lecture.  Do <em>not</em> use <tt>insertInOrder</tt>
+to sort the list because it is much too slow.</p></li>
+<li><p><tt>main</tt> the main method will accept a command line argument that is the filename for a file of job data.  The method should:
+  </p><ol><li>open the file</li> <li>create a list of jobs
+from the data in the file (you decide whether this should be an array, ArrayList or linked list and see below for the format of the job file).  I recommend using the
+<tt>Scanner</tt> class from the API and its <tt>nextInt</tt> method.</li>
+      <li>create a schedule that considers the jobs in order by profit, starting with the largest profit, and schedules each job as late as possible</li>
+      <li>create a schedule that considers the jobs in order by profit, starting with the largest profit, and schedules each job as early as possible</li>
+      <li>prints each schedule in an appropriate format including the total profit of each schedule and a message indicating which schedule has more profit</li>
+      </ol></li>
+The main method should catch errors and print appropriate messages instead of crashing.<p></p>
+
+Here are two other methods you can add you can add to your <tt>JobScheduler</tt> class if you want a convenient way to create lists and files of random jobs to help
+you with your testing
+
+<li><p><tt>createRandomJobs</tt> creates an array of random jobs.  Note that the method does not create <tt>CompoundJob</tt>s.
+</p><pre>  /**
+   * Creates a file with random job data, based on the parameters given.  The job data will be 
+   * sorted by earliest start time.
+   * @param numJobs   the number of jobs to create
+   * @param maxStart  the latest time at which a job may set as its earliest start time
+   * @param maxDuration  the maximum time that a job can take to complete
+   * @param maxLag   the greatest time between the earliest start time for a job and the latest time that a job must start to meet its deadline
+   * @param maxProfic  the maximum amount of profit from a job
+   * @return an array containing the random jobs
+   */
+  public Job[] createRandomJobs(int numJobs, int maxStart, int maxDuration, int maxLag, int maxProfit) {
+    Job[] jobs = new Job[numJobs];
+    
+    // For each desired job, create 4 random numbers based on the parameters, use the numbers to create a job,
+    // and store the job in an array.
+    for (int i = 0; i &lt; numJobs; i++) {
+      int start = (int)(Math.random() * maxStart) + 1;
+      int duration = (int)(Math.random() * maxDuration) + 1;
+      int deadline = start + duration + (int)(Math.random() * (maxLag + 1));
+      int profit = (int)(Math.random() * maxProfit) + 1;
+      jobs[i] = new Job(i, start, deadline, duration, profit); 
+    }
+
+    // Sort the jobs by earliest start time
+    Arrays.sort(jobs, Job.getStartComparator());
+  
+    return jobs;
+  }
+</pre><p></p>
+</li>
+<li><p><tt>createJobFile</tt>: creates a file with job data.
+</p><pre>  /**
+   * Creates a file with job data.
+   * @param fileName  the name of the file to store the job data.  The file must not exist.
+   * @param jobs an array containing the jobs
+   */
+  public void createJobFile(String fileName, Job[] jobs) {
+    // Check that the output file does not already exist
+    File file = new File(fileName);
+    if (file.exists()) {
+      System.out.println("Error: file " + fileName + " already exists.");
+      return;
+    }
+    
+    try {
+      BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+ 
+      // For each job in the array, write the job to the file as 5 numbers separated by spaces.
+      // Place an each job on a new line.
+      for (int i = 0; i &lt; jobs.length; i++) {
+        String s = i + " " + jobs[i].getEarliestStart() + " " + jobs[i].getDeadline() + " " + jobs[i].getDuration() + " " + jobs[i].getProfit();
+        writer.write(s, 0, s.length());
+        writer.newLine();
+      }
+      writer.flush();
+      writer.close();
+    }
+    catch (IOException e) {
+      System.out.println("Error writing to file " + fileName);
+    }
+  }
+</pre>
+<p></p></li>
+<p></p>
+</ol></li></ul>
+
+<h4>The Job file</h4>
+
+<p>A job data file is a list of numbers, five integers on each line, that match the data given in the above table.
+So, a job file that contains those three jobs will have the data:
+</p><pre>1 2 6 2 10
+2 3 6 3 20
+3 3 9 5 15
+</pre>
+For example, here is a job file <a href="https://blackboard.case.edu/bbcswebdav/pid-1245319-dt-content-rid-3611420_1/courses/eecs132_hsc21_8/joblist1.txt">joblist1.txt</a> that contains 100
+jobs and no compound jobs.  The files produced by <tt>createJobFile</tt> have the same format.  A compound job is identified by multiple jobs with the same job id.<p></p>
+
+<h3>JUnit Testing (20% of your project grade)</h3>
+
+<p>You are to write JUnit tests for your class(es) as well as a testing report.  The testing report should describe the <em>kinds</em> of tests that are required
+for this project.  The JUnit testing classes should have comments and testing method names matching the specific tests to the descriptions in your report.  You do not need
+to JUnit test the main method.</p>
+
+<h3>Extra Credit: (up to a 10% bonus)</h3>
+
+<p>The extra credit for this homework is to try to come up with improved algorithms for scheduling the jobs and/or variations that handle compound jobs.
+You are to code these algorithms and run experiments to determine the performance of these algorithms.
+If you do the extra credit, you should submit a written report that describes your new algorithms, the results of your experiments, and your analysis.
+ The receive extra credit, you need to create non-trivial algorithms that have a chance of performing better than the above algorithms,
+ and you should provide non-trivial analysis of your results.</p>
+
+
+
+
+</body></html>

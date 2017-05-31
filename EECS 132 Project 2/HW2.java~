@@ -1,0 +1,48 @@
+public class HW2 {
+  public static String replaceFirstK(String s, char replaceThis, char withThis, int i) {
+    StringBuilder sb = new StringBuilder();
+    int index = 0;
+    while(index < s.length()) {
+      if((s.charAt(index) == replaceThis) && (i > 0)) {
+        sb.append(withThis);
+        i--;
+        index++;
+      }
+      else {
+        sb.append(s.charAt(index));
+        index++;
+      }
+    }
+    return sb.toString();
+  }
+  
+  public static String allChars(char start, char stop) {
+    StringBuilder sb = new StringBuilder();
+    int i = (int)start;
+    while(i <= (int)stop) {
+      sb.append((char)i);
+      i++;
+    }
+    return sb.toString();
+  }
+  
+  public static String showCharOfString(String a, String b) {
+    StringBuilder sb = new StringBuilder();
+    int indexA = 0;
+    int indexB = 0;
+    boolean foundChar = false;
+    while(indexA <= a.length()) {
+      while(indexB <= b.length() && foundChar == false) {
+        if(a.charAt(indexA) == a.charAt(indexB)) {
+          sb.append(a.charAt(indexA));
+          indexB = 0;
+          foundChar = true;
+        }
+        else {
+          indexB++;
+        }
+      }
+      indexA++;
+    }
+  }
+}

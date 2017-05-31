@@ -1,0 +1,87 @@
+QuickSort of array size 1000
+Median for ordered: 210173ns
+Median for reversed order: 71111ns
+Mean for random order: 150281.0ns
+Variance for random order: 1.2473462834E10ns
+
+ 
+HeapSort of array size 1000
+Median for ordered: 154469ns
+Median for reversed order: 144593ns
+Mean for random order: 137955.0ns
+Variance for random order: 1.167117028E9ns
+
+ 
+MergeSort of array size 1000
+Median for ordered: 194370ns
+Median for reversed order: 242568ns
+Mean for random order: 145027.0ns
+Variance for random order: 2.810652407E9ns
+
+ 
+QuickSort of array size 10000
+Median for ordered: 131951ns
+Median for reversed order: 137481ns
+Mean for random order: 869570.0ns
+Variance for random order: 6.925109416E9ns
+
+ 
+HeapSort of array size 10000
+Median for ordered: 896395ns
+Median for reversed order: 910618ns
+Mean for random order: 1079506.0ns
+Variance for random order: 4.951817314E9ns
+
+ 
+MergeSort of array size 10000
+Median for ordered: 350815ns
+Median for reversed order: 348445ns
+Mean for random order: 851081.0ns
+Variance for random order: 7.605159321E9ns
+
+ 
+QuickSort of array size 100000
+Median for ordered: 1552593ns
+Median for reversed order: 1599211ns
+Mean for random order: 1.0853258E7ns
+Variance for random order: 1.129076836136E12ns
+
+ 
+HeapSort of array size 100000
+Median for ordered: 7569386ns
+Median for reversed order: 8073879ns
+Mean for random order: 1.2647748E7ns
+Variance for random order: 3.97973460971E11ns
+
+ 
+MergeSort of array size 100000
+Median for ordered: 4233088ns
+Median for reversed order: 4521878ns
+Mean for random order: 1.1631649E7ns
+Variance for random order: 2.15299359425E11ns
+
+ 
+QuickSort of array size 1000000
+Median for ordered: 17550229ns
+Median for reversed order: 19570575ns
+Mean for random order: 1.14961428E8ns
+Variance for random order: 2.9334814978484E13ns
+
+ 
+HeapSort of array size 1000000
+Median for ordered: 86144824ns
+Median for reversed order: 89602011ns
+Mean for random order: 1.61575412E8ns
+Variance for random order: 2.2248196981676E13ns
+
+ 
+MergeSort of array size 1000000
+Median for ordered: 52574440ns
+Median for reversed order: 55651183ns
+Mean for random order: 1.39375659E8ns
+Variance for random order: 8.0824752846578E13ns
+
+ 
+
+ 
+ Total running time: 7.292261646 Seconds

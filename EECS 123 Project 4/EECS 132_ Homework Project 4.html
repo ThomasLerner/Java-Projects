@@ -1,0 +1,420 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!-- saved from url=(0108)https://blackboard.case.edu/bbcswebdav/pid-1241748-dt-content-rid-3554882_1/courses/eecs132_hsc21_8/hw4.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>EECS 132: Homework Project 4</title>
+<style type="text/css"></style></head>
+
+<body>
+<h2>Programming Project 4</h2>
+<h3>Due Wednesday, November 18 at 11:59pm</h3>
+
+<p>The purpose of this project is to give you practice desigining a class hierarchy as well as work with arrays and action listeners and build a stand-alone program.  
+In this project, you will create a program that is a 2-person game of a chess variant called Xiangqi.  
+The program will be designed so that you, or someone using your classes, can
+easily create additional chess variants.
+</p>
+
+<p><strong>Important</strong>: Spend some time thinking about your hierarchy.  If you design a good hierarchy and use polymorphism properly, you can greatly reduce
+the amount of code you need to write.  Your hierarchy should be natural and follow the <em>is-a</em> and <em>has-a</em> rules.  Don't force something into the hierarchy if
+it does not fit the <em>is-a</em> rule.</p>
+
+
+<h3>General Guidelines (20% of your grade will be based on using good style)</h3>
+
+<p>Guidelines continued from past projects:
+</p><ul>
+<li>You should place a JavaDoc comment at the top of the file that contains your name (with an appropriate tag)
+and a short description of the purpose of the class.</li>
+<li>You should place a <em>short</em> JavaDoc comment before (directly above) each method describing the method.  The comment should
+be one sentence and describe <em>what</em> the method does, not <em>how</em> it does it.  Be certain to use the
+appropriate JavaDoc tags for parameters, return values, and exceptions (if appropriate). </li>
+<li>You should place a short JavaDoc comment directly above any field indicating the purpose of the variable.</li>
+<li>You should place a comment next to any local variable (loop indeces do not need comments) indicating the purpose
+of the variable. </li>
+<li>You should place a short comment above each loop explaining how the loop works.
+Ideally, you should list the goal of the
+loop, any required precondition for the loop, and if you can, a good invariant for the loop.</li>
+<li>The class should be organized so the fields are at the top, then the constructors, then the non-static methods,
+and finally the static methods.  The <tt>main</tt> method should be last.</li>
+<li>There should be an empty line between the end of one method and the start of the JavaDoc comment for the next method.</li>
+<li>All variables and methods should be named according to the standard Java protocol.</li>
+<li>All code should be indented appropriately.</li>
+<li>You need to avoid unnecessary fields in your class. </li>
+<li>Your loops should be simple.  Avoid nested loops unless they are required.</li>
+</ul>
+and some new guidelines for this homework:
+<ul>
+<li>You may (and probably need to) add additional classes, interfaces, methods and fields to what is listed below.</li>
+<li>You should not have an object store the same value in multiple fields. (For example, if the parent class has a field that
+stores a value, the class that extends it should not have a field that stores the identical value.)</li>
+<li>Your class hierarchy should be simple and intuitive.  Don't force a class to be a subclass of another if it does not make sense.</li>
+<li>A good hierarchy will reduce the amount of code you need to write.</li>
+</ul><p></p>
+
+<p>To submit your project, click on the <em>HW 4</em> link, and you should find a <em>Submit</em> link.  Attach your
+Java files, your JUnit test file, and your testing report.
+Remember to attach the files that end in <tt>.java</tt>, not <tt>.class</tt> or <tt>.java~</tt>.</p>
+
+<h3>Part I: Programming (60% of your grade will be correctness of the following)</h3>
+
+<h4>Creating A Basic Chess Game and Visuals</h4>
+
+<p><em>Hint</em>: There are a lot of classes and methods listed below.  However, if you design a good hierarchy, most of the classes will be very
+short!  The description lists everything that the classes should do by the end of the project, but you should not try to code all of it at once.
+Intially focus on the <tt>ChessBoard</tt> and get that to display on the screen.  Then do a careful design of your hierarchy for the chess pieces.
+Once you have the hierarchy, then start creating the different pieces,
+and as you have each piece, you can addit to the board and fill in the rest of the game behavior.</p>
+
+<p>Here is an example of what the basic game could look like:</p>
+<img border="0" src="./EECS 132_ Homework Project 4_files/xiangqi.jpg" width="400" height="400"><p></p>
+
+<p>The first classes and interfaces you are to create will create the visuals for the chess board and define the rules for the chess game.
+These classes and interfaces should not be specific to any particular variant of chess.  The first types are:
+
+</p><ul>
+<li><p><tt>ChessBoardDisplay</tt>: is an <em>interface</em> that defines the visuals for the chessboard.  It should have the following method stubs:
+</p><ol><li><tt>displayEmptySquare</tt>: takes a <tt>JButton</tt> and two <tt>int</tt>s as input.  The button is a square on the chess board, and the int values are the
+row and column of the button.  The method does not return anything.  The purpose of the method is to create good visuals for the empty square so that we have a nice looking chess board.</li>
+    <li><tt>displayFilledSquare</tt>: takes a <tt>JButton</tt>, two <tt>int</tt>s, and a chess piece as input.  The button is a square on the chess board, the two int values are the row and column of the button, and the chess piece is the piece located on that button.  The method does not return anything.  The purpose of the method
+is to create nice visuals for the square that has a piece on it so that we have a nice looking chess board.</li>
+    <li><tt>highlightSquare</tt>: takes a <tt>boolean</tt>, <tt>JButton</tt>, two <tt>int</tt>s, and a chess piece as input.  The boolean represents
+       whether we are turning the highlight on or off, the button is a square on the chess board, the two int values are the row and column of
+       the button, and the chess piece is the piece (if one exists) that is on the button.  The method does not return anything.  The purpose of the method is to create visuals that let
+       us highlight and remove the highlight on a particular square of the board.</li>
+    </ol>
+Remember that this type is an interface so you will not be writing any code here.<p></p></li>
+
+
+<li><p><tt>ChessGame</tt>: is an <em>interface</em> that defines the basic moves of a chess game.  It should have the following method stubs as well
+as an <em>enum</em> type.
+</p><ol><li><tt>legalPieceToPlay</tt>: takes a chess piece as input and returns a <tt>boolean</tt>.  The method will return <tt>true</tt> if it is legal
+to play this piece during this particular turn of the game.</li>
+    <li><tt>makeMove</tt>: takes a chess piece and two <tt>int</tt> values that indicate a row and a column on the board.  The method will move the
+given piece to the square at that row and column (if it is legal to do so).  The method returns <tt>true</tt> if the move was legal and successfully
+performed.  The method returns <tt>false</tt> if the move was not performed because it was illegal.</li></ol>
+<p></p></li>
+The <em>enum</em> type you should include is:
+<pre>public enum Side { NORTH, SOUTH };
+</pre>
+An enum is a shortcut notation for a public static inner class that has a private constructor. The values inside the braces are public static final fields.  So, the shortcut stands for:
+<pre>public static final class Side {
+  public static final Side NORTH = new Side();
+  public static final Side SOUTH = new Side();
+
+  private Side() {
+  }
+}
+</pre>
+Because the class has a private constructor, the two values listed above are the only legal values for the type.  We will use this type to indicate
+the different sides for the chess game.  (If you want to add an EAST and a WEST to create a 4-person variation of chess, you may.)<p></p>
+
+<li><p><tt>ChessBoard</tt>:  a class that is a default chessboard.  The chessboard consists of a <tt>JFrame</tt> that has a two dimensional grid of <tt>JButton</tt>s for the squares.</p>
+
+<p>The <tt>ChessBoard</tt> class should have the following constructor:
+</p><ul>
+<li> <tt>public ChessBoard(int rows, int columns, ChessBoardDisplay chessDisplay, ChessGame chessVersion)</tt> <br>
+    Creates a <tt>rows</tt>x<tt>columns</tt> grid, displays and starts the game.  You may assume reasonable numbers are entered for the rows and columns. 
+</li></ul>
+<p>You are to create a game board by making a two dimensional grid of <tt>JButton</tt>s on a <tt>JPanel</tt>.
+You do this by setting the <em>layout manager</em> of the <tt>JPanel</tt> to be a
+<tt>GridLayout</tt> of the appropriate size.  Here is code that creates a layout for a 4x4 grid:
+</p><pre>JPanel board = new JPanel(new GridLayout(4, 4));
+</pre>
+Then, the <tt>JPanel</tt> can be added as the center component of a <tt>JFrame</tt>,
+<pre>  <em>your JFrame</em>.getContentPane().add(board, "Center")
+</pre>
+and you can
+display the <tt>JFrame.</tt><p></p>
+<p>
+With a 4x4 grid, you can add up to 16 components to the <tt>JPanel</tt>.
+Each component added to the <tt>JPanel</tt> will go into the grid in the following order:
+</p><pre> 1  2  3  4
+ 5  6  7  8
+ 9 10 11 12
+13 14 15 16</pre>
+Where the number <em>i</em> indicates the location of the <em>i</em>th added component.
+<p></p>
+
+<p>You should create a 2-dimensional array of <tt>JButton</tt>s.  The <tt>JButtons</tt>s should be added to the <tt>JPanel</tt>
+in the appropriate order so that the location of a button in the array corresponds to its location
+in the panel.  For each button, you should call the <tt>chessDisplay</tt>'s <tt>displayEmptySquare</tt> so that the button has the correct
+graphics.  Then, set a default size for the <tt>JFrame</tt> so that it launches with
+a reasonable board.</p>
+
+<p>Your <tt>ChessBoard</tt> should also have a 2-dimensional array that stores chess pieces.  The array should have the same
+dimensions as the <tt>JButton</tt> array, and the piece at row <em>i</em> column <em>j</em> of the array of chess pieces will
+be the chess piece that is currently on the square represented by the <tt>JButton</tt> at row <em>i</em> and column <em>j</em>
+of the <tt>JButton</tt> array</p>
+
+<p><strong>Important Point 1:</strong> You should not call <tt>setVisible</tt> for your <tt>JFrame</tt> until after you have added all the buttons (and created any other visuals for your game).
+Swing is <em>multi-threaded</em>.  We will learn about threads at the end of the course, but in short, a different thread is running your class
+constructor than is displaying the JFrame.  If you run <tt>setVisible</tt> before you complete setting <tt>JFrame</tt>'s look, some of the buttons or visuals may not be visible
+when the window first appears.</p>
+
+<p><strong>Important Point 2:</strong> Apple computers have their own strict "look-and-feel" for buttons and windows. If you want to 
+give yourself lots of flexibility to create the display how you want, you should add the following code to disable the Apple "look-and-feel".  Even if you are not using an Apple computer, you should still add this code so that your program will display the same on an Apple computer
+as it does on your own.  Place this code in the constructor: 
+</p><pre>    try {
+      UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+    }
+    catch (Exception e) {
+    }
+</pre><p></p>
+
+<p>The <tt>ChessBoard</tt> class should have the following methods:
+</p><ol><li><p><tt>addPiece</tt>: takes a chess piece, and two <tt>int</tt> values as input.  The int values are the row and the column.  The method will add the chess piece
+to the board by both adding it to that array of chess pieces at the appropriate entry and by
+calling the <tt>displayFilledSquare</tt> method of the board's <tt>ChessBoardDisplay</tt>.
+The method should not return anything.</p></li>
+
+    <li><p><tt>removePiece</tt>: takes two <tt>int</tt> values as input representing the row and column of the piece to remove.
+        The method should remove the piece at that row and column from the array of chess pieces, and the method should
+        call the <tt>displayEmptySquare</tt> method of the board's <tt>ChessBoardDisplay</tt> to visually remove the piece from the board.
+        The method should return the piece that was removed.</p></li>
+
+    <li><p><tt>hasPiece</tt>: takes two <tt>int</tt> values as input representing a row and a column.  The method should return <tt>true</tt>
+        if there is a chess piece at this location and <tt>false</tt> otherwise.</p></li>
+
+    <li><p><tt>getPiece</tt>: takes two <tt>int</tt> values as input representing a row and a column.  The method should return the chess piece
+        that is at this location on the board.  Do something appropriate if there is no such piece.</p></li>
+
+<li><p>In addition, you should create an <tt>ActionListener</tt> for the <tt>JButton</tt>s.   
+We want the game play to be as follows: a user first clicks a piece on the board and then clicks the square where the user wants to move the piece
+to.  The action listener needs to create this behavior.</p>
+
+<p>The action listener should first identify the button that
+was clicked.
+  If this is the "first click" of a button, and if the button clicked contains a chess piece, call the <tt>ChessGame</tt>s
+<tt>legalPieceToPlay</tt> to verify that this piece can be played.  If it can't be legally played, then the action listener should return and
+keep waiting for a "first click".  If the piece can be legally played, the button should be highlighted (by calling the 
+<tt>ChessBoardDisplay</tt>;s <tt>highlightSquare</tt> method), and the listener should return, but now we are waiting for a "second click".</p>
+<p>If the action listener receives a "second click", remove the highlight on the first clicked button (using the <tt>highlightSquare</tt> method)
+and call the <tt>ChessGame</tt>'s <tt>makeMove</tt> method using the piece that was clicked on the first click and the row and column
+of this second clicked button.  Then the action listener should return, and we are now again waiting for a "first click".  (If the same button
+is clicked on the second click as was clicked on the first click, just return and keep waiting for a "second click".)</p></li></ol><p></p>
+
+<p><em>Hint</em>: Do not try to do all of this at once.  First, just get the <tt>JFrame</tt> with the grid of buttons to display.  Then
+have the action listener identify the row and column of the button that was clicked.  Then update the action listener
+so that it highlights the first clicked button and removes the highlight of the second clicked button.
+</p></li>
+
+<h4>Specific Classes to Create the Xiangqi Game</h4>
+
+<li><p><tt>XiangqiDisplay</tt> is a class that implements the <tt>ChessBoardDisplay</tt> interface.  The exact behavior of the methods is up to you (see the extra credit), 
+but for the basic game I suggest the following behavior:
+</p><ol><li> override the <tt>displayEmptySquare</tt> method to set the button's background to <tt>java.awt.Color.gray</tt>, the button's text to the empty string, and the button's
+icon to <tt>null</tt>.</li>
+    <li> override the <tt>displayFilledSquare</tt> method to set the button's background, text and icon to be the values of the chess piece's <tt>getColor</tt>, <tt>getLabel</tt>,
+and <tt>getIcon</tt> methods.</li>
+    <li> override the <tt>highlightSquare</tt> method so that if the boolean input is <tt>true</tt>, you change the button's background to <tt>Color.yellow</tt> and leave the 
+rest of the button unchanged.  If the boolean input is <tt>false</tt> call either <tt>displayEmptySquare</tt> or <tt>displayFilledSquare</tt> depending on whether or not the piece is
+<tt>null</tt>.</li></ol>
+
+<p></p></li>
+
+<li><p><tt>Xiangqi</tt> is a class that implements the <tt>ChessGame</tt> interface. The class should have the following constructor:
+</p><ul><li><tt>Xiangqi()</tt>: the constructor creates a <tt>ChessBoard</tt> with 10 rows, 9 columns, and a <tt>XiangqiDisplay</tt>.
+The constructor should create all the initial pieces for the game and place them at the appropriate places on the chess board
+(calling the <tt>addPiece</tt> method).  The constructor should determine which <tt>Side</tt> will move first.</li></ul><p></p>
+<p>The class should have the following methods:
+</p><ol><li><tt>legalPieceToPlace</tt>: for now, a piece is legal if it is the <tt>Side</tt> of the current turn.  You may add additional
+rules here if you wish.</li>
+    <li><p><tt>makeMove</tt>: call the input piece's <tt>isLegalMove</tt> method.  If the move is legal, move the piece (using the chess board's
+         <tt>removePiece</tt> and <tt>addPiece</tt> methods), call the pieces <tt>moveDone</tt> method, change the current turn <tt>Side</tt>,
+         and return <tt>true</tt>.  If the move is not legal, return <tt>false</tt> and do no other processing.</p>
+         <p>You may add other Xiangqi specific rules in this method.  For example, besides calling the piece's <tt>isLegalMove</tt> to determine
+          if the move is legal, you can all check to see if the move will result in "facing generals" (two kings on the same column with no
+          pieces in between) or if the move will place the current player's king in check.  These are rules that should be checked regardless of
+          what piece is moved, and so this is an appropriate place to check them.  Any rules that are piece-specific should not be placed here but
+          in the chess piece's <tt>isLegalMove</tt> method. (You are not required to check for "facing generals" or moves into check.)</p></li>
+    <li><p><tt>main:</tt> the <tt>Xiangqi</tt> class should have a <tt>main</tt> method so that you can run this game as a stand-alone program.</p></li>
+</ol>
+<p></p></li>
+
+<h4>The Chess Pieces</h4>
+
+<p>You are to create a different type for each of the different chess pieces.  Each piece is defined by how it is allowed to move.  You should create a 
+hierarchy of pieces based on the movement rules.  You may need to create additional types and methods to what is specified here.  Your goal is to
+design the hierarchy so you can define the pieces with as little redundant code as possible.  For example, if there are rules common to all
+pieces, they should be placed high in the hierarchy so all the pieces can inherit that rule.</p>
+
+
+
+<p>You are required to have, at the minimum, the following classes.  The descriptions assume you have the two sides starting at the top and bottom
+of the board. 
+Some of the required methods listed below are redundant.  You are required to have them, and they are provided to 
+give you a lot of flexibility in how you create your hierarchy.</p>
+
+<li><p><tt>KingPiece</tt>: a king can move one square vertically or horizontally.  A king can not move out of the three center columns of the board nor out of the bottom (or top) three rows of the board.
+
+The KingPiece should have the following methods:
+</p><ol><li><tt>getChessBoard()</tt> returns the chess board the piece is on.</li>
+    <li><tt>getColor()</tt> returns the <tt>java.awt.Color</tt> of the piece.</li>
+    <li><tt>getLabel()</tt> returns a <tt>String</tt> label of the piece.</li>
+    <li><tt>getIcon()</tt> returns a graphical <tt>javax.swing.Icon</tt> for the piece.</li>
+    <li><tt>getSide()</tt> returns the <tt>Side</tt> (from the <tt>ChessGame</tt>) class that the piece is on (i.e. the team of the piece).  While
+usually all pieces on the same side have the same color, you have this method should you wish to use color more creatively.</li>
+    <li><tt>getRow()</tt> returns an <tt>int</tt> that indicates the row that the piece is on.</li>
+    <li><tt>getColumn()</tt> returns an <tt>int</tt> that indicates the column that the piece is on.</li>
+    <li><tt>isLegalMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column. (This method should give the correct answer whether or not there is an opposing piece on the destination square.)</li>
+    <li><tt>isLegalNonCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and columm <em>assuming</em> there is no opponent piece on the destination square.
+The move is legal if it is a single space horizontally and vertically, and the move does not take the piece outside the middle three columns or outside the three rows closest to its side of the board.</li>
+    <li><tt>isLegalCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column <em>assuming</em> there is an opponent piece on the destination square. A king's capture move is identical to its non-capture move.</li>
+    <li><tt>moveDone()</tt> does nothing and returns nothing (it needed for the <tt>ChessGame</tt>).</li>
+</ol> 
+A KingPiece needs to be created with the board, color, label, icon and side. 
+  For the basic game, set the King's label to be <tt>"K"</tt> and the icon to be <tt>null</tt>.<p></p></li>
+
+<li><p><tt>GuardPiece</tt>: a guard can move one square diagonally.  A guard can not move out of the three center columns of the board nor out of
+the bottom (or top) three rows of the board.
+
+The GuardPiece should have the following methods:
+</p><ol><li><tt>getChessBoard()</tt> returns the chess board the piece is on.</li>
+    <li><tt>getColor()</tt> returns the <tt>java.awt.Color</tt> of the piece.</li>
+    <li><tt>getLabel()</tt> returns a <tt>String</tt> label of the piece.</li>
+    <li><tt>getIcon()</tt> returns a graphical <tt>javax.swing.Icon</tt> for the piece.</li>
+    <li><tt>getSide()</tt> returns the <tt>Side</tt> (from the <tt>ChessGame</tt>) class that the piece is on (i.e. the team of the piece).  While
+usually all pieces on the same side have the same color, you have this method should you wish to use color more creatively.</li>
+    <li><tt>getRow()</tt> returns an <tt>int</tt> that indicates the row that the piece is on.</li>
+    <li><tt>getColumn()</tt> returns an <tt>int</tt> that indicates the column that the piece is on.</li>
+    <li><tt>isLegalNonCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and columm <em>assuming</em> there is no opponent piece on the destination square.
+A move is legal if it is a single space in any diagonal direction provided the move does not take the guard outside the middle three columns of 
+the board or outside the three rows closest to the edge on its side of the board.</li>
+    <li><tt>isLegalCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column <em>assuming</em> there is an opponent piece on the destination square. A guard's capture move is identical to its non-capture move.</li>
+    <li><tt>isLegalMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column. (This method should give the correct answer whether or not there is an opposing piece on the destination square.)</li>
+    <li><tt>moveDone()</tt> does nothing and returns nothing (it needed for the <tt>ChessGame</tt>).</li>
+</ol> 
+A GuardPiece needs to be created with the board, color, label, icon and side. 
+  For the basic game, set the Guard's label to be <tt>"G"</tt> and the icon to be <tt>null</tt>.<p></p></li>
+
+<li><p><tt>ElephantPiece</tt>: an elephant can move exactly two squares diagonally on each move.  The elephant cannot jump over a piece so the first diagonal piece of the move must be empty.  Elephants can not cross the center of the board (i.e. they are restricted to the top or bottom half of the rows).
+The ElephantPiece should have the following methods:
+</p><ol><li><tt>getChessBoard()</tt> returns the chess board the piece is on.</li>
+    <li><tt>getColor()</tt> returns the <tt>java.awt.Color</tt> of the piece.</li>
+    <li><tt>getLabel()</tt> returns a <tt>String</tt> label of the piece.</li>
+    <li><tt>getIcon()</tt> returns a graphical <tt>javax.swing.Icon</tt> for the piece.</li>
+    <li><tt>getSide()</tt> returns the <tt>Side</tt> (from the <tt>ChessGame</tt>) class that the piece is on (i.e. the team of the piece).  While
+usually all pieces on the same side have the same color, you have this method should you wish to use color more creatively.</li>
+    <li><tt>getRow()</tt> returns an <tt>int</tt> that indicates the row that the piece is on.</li>
+    <li><tt>getColumn()</tt> returns an <tt>int</tt> that indicates the column that the piece is on.</li>
+    <li><tt>isLegalNonCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and columm <em>assuming</em> there is no opponent piece on the destination square.  
+A legal move is exactly two spaces in any straight diagonal direction.  The first space crossed must be empty.  The elephant cannot be moved to the opponent's half of the chess board.</li>
+    <li><tt>isLegalCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column <em>assuming</em> there is an opponent piece on the destination square. A elephant's capture move is identical to its non-capture move.</li>
+    <li><tt>isLegalMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column. (This method should give the correct answer whether or not there is an opposing piece on the destination square.)</li>
+    <li><tt>moveDone()</tt> does nothing and returns nothing (it needed for the <tt>ChessGame</tt>).</li>
+</ol> 
+An ElephantPiece needs to be created with the board, color, label, icon and side. 
+  For the basic game, set the Elephant's label to be <tt>"E"</tt> and the icon to be <tt>null</tt>.<p></p></li>
+
+<li><p><tt>KnightPiece</tt>: a knight can move exactly two squares on each move.  The first square must be a horizontal or vertical move, and that is followed by a diagonal move with the result being an "L" shaped move.  The knight can not jump over pieces so the first square of the move
+must be vacant.
+The KnightPiece should have the following methods:
+</p><ol><li><tt>getChessBoard()</tt> returns the chess board the piece is on.</li>
+    <li><tt>getColor()</tt> returns the <tt>java.awt.Color</tt> of the piece.</li>
+    <li><tt>getLabel()</tt> returns a <tt>String</tt> label of the piece.</li>
+    <li><tt>getIcon()</tt> returns a graphical <tt>javax.swing.Icon</tt> for the piece.</li>
+    <li><tt>getSide()</tt> returns the <tt>Side</tt> (from the <tt>ChessGame</tt>) class that the piece is on (i.e. the team of the piece).  While
+usually all pieces on the same side have the same color, you have this method should you wish to use color more creatively.</li>
+    <li><tt>getRow()</tt> returns an <tt>int</tt> that indicates the row that the piece is on.</li>
+    <li><tt>getColumn()</tt> returns an <tt>int</tt> that indicates the column that the piece is on.</li>
+    <li><tt>isLegalNonCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and columm <em>assuming</em> there is no opponent piece on the destination square.
+The legal move is an "L" shape where the first step is a single space horizontally or vertically <em>onto an empty space</em> and then a single space diagonal <em>in the same direction as the vertical/horizontal move</em>.</li>
+    <li><tt>isLegalCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column <em>assuming</em> there is an opponent piece on the destination square. A knight's capture move is identical to its non-capture move.</li>
+    <li><tt>isLegalMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column. (This method should give the correct answer whether or not there is an opposing piece on the destination square.)</li>
+    <li><tt>moveDone()</tt> does nothing and returns nothing (it needed for the <tt>ChessGame</tt>).</li>
+</ol> 
+A KnightPiece needs to be created with the board, color, label, icon and side. 
+  For the basic game, set the Knight's label to be <tt>"K"</tt> and the icon to be <tt>null</tt>.<p></p></li>
+
+<li><p><tt>RookPiece</tt>: a rook can move any number of spaces vertically or horizontally.  The rook cannot jump over pieces so all squares on the
+move (except possibly the last one) must be empty.
+The RookPiece should have the following methods:
+</p><ol><li><tt>getChessBoard()</tt> returns the chess board the piece is on.</li>
+    <li><tt>getColor()</tt> returns the <tt>java.awt.Color</tt> of the piece.</li>
+    <li><tt>getLabel()</tt> returns a <tt>String</tt> label of the piece.</li>
+    <li><tt>getIcon()</tt> returns a graphical <tt>javax.swing.Icon</tt> for the piece.</li>
+    <li><tt>getSide()</tt> returns the <tt>Side</tt> (from the <tt>ChessGame</tt>) class that the piece is on (i.e. the team of the piece).  While
+usually all pieces on the same side have the same color, you have this method should you wish to use color more creatively.</li>
+    <li><tt>getRow()</tt> returns an <tt>int</tt> that indicates the row that the piece is on.</li>
+    <li><tt>getColumn()</tt> returns an <tt>int</tt> that indicates the column that the piece is on.</li>
+    <li><tt>isLegalNonCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and columm <em>assuming</em> there is no opponent piece on the destination square.
+A legal move is any number of spaces horizontally or vertically with all spaces between the start space and the destination space empty.</li>
+    <li><tt>isLegalCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column <em>assuming</em> there is an opponent piece on the destination square. A rook's capture move is identical to its non-capture move.</li>
+    <li><tt>isLegalMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column. (This method should give the correct answer whether or not there is an opposing piece on the destination square.)</li>
+    <li><tt>moveDone()</tt> does nothing and returns nothing (it needed for the <tt>ChessGame</tt>).</li>
+</ol> 
+A RookPiece needs to be created with the board, color, label, icon and side. 
+  For the basic game, set the Rook's label to be <tt>"R"</tt> and the icon to be <tt>null</tt>.<p></p></li>
+
+<li><p><tt>CannonPiece</tt>: a cannon can move any number of spaces vertically or horizontally.  If the cannon is not capturing a piece, all the squares on its move must be empty.  If the cannon is capturing, it must jump over exactly one piece (of either <tt>Side</tt>) on its move.
+
+The CannonPiece should have the following methods:
+</p><ol><li><tt>getChessBoard()</tt> returns the chess board the piece is on.</li>
+    <li><tt>getColor()</tt> returns the <tt>java.awt.Color</tt> of the piece.</li>
+    <li><tt>getLabel()</tt> returns a <tt>String</tt> label of the piece.</li>
+    <li><tt>getIcon()</tt> returns a graphical <tt>javax.swing.Icon</tt> for the piece.</li>
+    <li><tt>getSide()</tt> returns the <tt>Side</tt> (from the <tt>ChessGame</tt>) class that the piece is on (i.e. the team of the piece).  While
+usually all pieces on the same side have the same color, you have this method should you wish to use color more creatively.</li>
+    <li><tt>getRow()</tt> returns an <tt>int</tt> that indicates the row that the piece is on.</li>
+    <li><tt>getColumn()</tt> returns an <tt>int</tt> that indicates the column that the piece is on.</li>
+    <li><tt>isLegalNonCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and columm <em>assuming</em> there is no opponent piece on the destination square.  The legal move is any number of spaces horizontally or vertically, but all the
+spaces of the move must be empty.</li>
+    <li><tt>isLegalCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column <em>assuming</em> there is an opponent piece on the destination square. A cannon's capture move is any number of spaces horizontally or vertically, but there
+must be exactly one other piece (of either side) before between the cannon and the piece being captured.</li>
+    <li><tt>isLegalMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column. (This method should give the correct answer whether or not there is an opposing piece on the destination square.)</li>
+    <li><tt>moveDone()</tt> does nothing and returns nothing (it needed for the <tt>ChessGame</tt>).</li>
+</ol> 
+A CannonPiece needs to be created with the board, color, label, icon and side. 
+For the basic game, set the Cannon's label to be <tt>"C"</tt> and the icon to be <tt>null</tt>.<p></p></li>
+
+<li><p><tt>PawnPiece</tt>: a pawn can move exactly one space vertically toward the opposite side of the board from its starting side.
+Once the pawn crosses the middle of the board, the pawn can also move one space horizontally (in either direction).
+
+The PawnPiece should have the following methods:
+</p><ol><li><tt>getChessBoard()</tt> returns the chess board the piece is on.</li>
+    <li><tt>getColor()</tt> returns the <tt>java.awt.Color</tt> of the piece.</li>
+    <li><tt>getLabel()</tt> returns a <tt>String</tt> label of the piece.</li>
+    <li><tt>getIcon()</tt> returns a graphical <tt>javax.swing.Icon</tt> for the piece.</li>
+    <li><tt>getSide()</tt> returns the <tt>Side</tt> (from the <tt>ChessGame</tt>) class that the piece is on (i.e. the team of the piece).  While
+usually all pieces on the same side have the same color, you have this method should you wish to use color more creatively.</li>
+    <li><tt>getRow()</tt> returns an <tt>int</tt> that indicates the row that the piece is on.</li>
+    <li><tt>getColumn()</tt> returns an <tt>int</tt> that indicates the column that the piece is on.</li>
+    <li><tt>isLegalNonCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and columm <em>assuming</em> there is no opponent piece on the destination square.
+A move is legal if it is a single space vertically toward the opposite side of the board.  Once the pawn crosses the middle of the board, the
+legal moves are a single space torward the opposite side or a single space in either direction horizontally.</li>
+    <li><tt>isLegalCaptureMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column <em>assuming</em> there is an opponent piece on the destination square. A pawn's capture move is identical to its non-capture move.</li>
+    <li><tt>isLegalMove(int row, int column)</tt> returns <tt>true</tt> if it is legal to move this piece to the input row and column. (This method should give the correct answer whether or not there is an opposing piece on the destination square.)</li>
+    <li><tt>moveDone()</tt> returns nothing.  You can use this method (if you wish) to indicate that the pawn has crossed the middle of the
+board and horizontal moves are now legal.</li>
+</ol> 
+A PawnPiece needs to be created with the board, color, label, icon and side. 
+For the basic game, set the Pawn's label to be <tt>"P"</tt> and the icon to be <tt>null</tt>.<p></p></li>
+
+</ul><p></p>
+
+
+
+<h3>Part II: Testing Report and JUnit (20% of your grade will be having a thorough report and properly coded JUnit tests)</h3>
+
+<p>Write a testing report that describes the needed tests for the above methods.  For any method that involves one or more loops, your report should describe what "first, middle, last" and "0, 1, many" means.
+Your report <em>does not</em> have to list specific tests, but it should describe the types of things that must be tested.</p>
+
+<p>Write a single JUnit class that has JUnit tests of the above methods in your project.  
+The comments you place in the JUnit class should refer back to your report so that it is clear what is being tested.
+</p>
+<p>It should be easy for a reader to quickly match a description in your report of something the must be tested with the specific methods or statements in the JUnit class that perform that test.</p>
+
+<p>Note that you will not be able to write JUnit tests for routines that display gadgets to the screen or that rely on user feedback.  For those, your testing report should describe
+the manual tests that should be done.  You should also be sure to break down your methods using helper methods so that you can JUnit test the helper methods and reduce the amount of
+manual testing that is required.</p>
+
+<h3>Extra Credit (10% bonus)</h3>
+
+<p>Add features to the game to make the game play more enjoyable or improve the visuals.  You should <em>not</em> change the behavior of the required methods, but anything else is allowed.
+Your grade will be based on how interesting your changes are and the level of coding challenge.  If you do the extra credit, you <em>must</em> include a comment on Blackboard indicating
+what you did.</p>
+ 
+
+
+
+</body></html>
